@@ -13,7 +13,7 @@ import pymupdf as fitz
 
 from cv_builder.cli import main, parser
 from cv_builder.config import AppConfig, ConfigError, application_name, load_config, slugify, write_config
-from cv_builder.pipeline import BuildError, _ApplicantParser, _open_document, _snapshot, build
+from cv_builder.pipeline import BuildError, _ApplicantParser, _configure_private_browser, _open_document, _snapshot, build
 from cv_builder.verification import verify_pdf
 
 
@@ -212,6 +212,17 @@ class PipelineTests(unittest.TestCase):
             with mock.patch("cv_builder.pipeline._render", side_effect=lambda _html, pdf: make_pdf(pdf, applicant="Applicant: Example")):
                 result = build(app, downloads_dir=root / "Downloads", open_document=False)
             self.assertEqual(Path(result["pdf"]).name, "Applicant- Example CV.pdf")
+
+    def test_private_browser_path_overrides_ambient_shared_cache(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            private = root / "browsers"
+            private.mkdir()
+            with mock.patch("cv_builder.pipeline.data_root", return_value=root), mock.patch.dict(
+                os.environ, {"PLAYWRIGHT_BROWSERS_PATH": "/shared/browser/cache"}
+            ):
+                _configure_private_browser()
+                self.assertEqual(os.environ["PLAYWRIGHT_BROWSERS_PATH"], str(private))
 
     def test_viewer_failure_returns_warning_without_failing_build(self):
         with tempfile.TemporaryDirectory() as temp:

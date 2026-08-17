@@ -12,6 +12,7 @@ from pathlib import Path
 import pymupdf as fitz
 
 from .config import load_config
+from .paths import data_root
 from .verification import verify_pdf
 
 _PLACEHOLDER = re.compile(r"\[\[[^\[\]\n]+\]\]")
@@ -153,7 +154,14 @@ def _snapshot(html: Path, iterations: Path) -> tuple[int, Path]:
     return number, destination
 
 
+def _configure_private_browser() -> None:
+    private_browsers = data_root() / "browsers"
+    if private_browsers.is_dir():
+        os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(private_browsers)
+
+
 def _render(html: Path, pdf: Path) -> None:
+    _configure_private_browser()
     try:
         from playwright.sync_api import Error as PlaywrightError
         from playwright.sync_api import sync_playwright
