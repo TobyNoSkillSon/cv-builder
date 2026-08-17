@@ -1,0 +1,24 @@
+[project]
+name = "cv-builder"
+version = "0.2.0"
+description = "Minimal CLI for creating, rendering and verifying editable HTML CVs"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+  "playwright>=1.49,<2",
+  "PyMuPDF>=1.24,<2",
+]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["cv_builder*"]
+
+[tool.setuptools.package-data]
+cv_builder = ["templates/*.html", "templates/*.css"]
+
+[project.scripts]
+cv-builder = "cv_builder.cli:main"

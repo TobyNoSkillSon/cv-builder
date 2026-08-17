@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import sys
+root = Path(__file__).resolve().parent
+sys.path.insert(0, str(root))
+from cv_builder.cli import main
+raise SystemExit(main())

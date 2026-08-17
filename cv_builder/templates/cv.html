@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CV</title>
+  <link rel="stylesheet" href="cv.css">
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1 data-cv-applicant>[[APPLICANT_NAME]]</h1>
+        <p class="location">[[LOCATION]]</p>
+      </div>
+      <address>
+        <a href="mailto:[[EMAIL]]">[[EMAIL]]</a>
+        <a href="tel:[[PHONE_LINK]]">[[PHONE_DISPLAY]]</a>
+        <a href="[[PROFESSIONAL_LINK_URL]]">[[PROFESSIONAL_LINK_LABEL]]</a>
+      </address>
+    </header>
+
+    <section>
+      <h2>Profile</h2>
+      <p>[[VACANCY_SPECIFIC_PROFILE]]</p>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      <article>
+        <div class="row">
+          <div>
+            <h3>[[ROLE_1]]</h3>
+            <p class="organisation">[[ORGANISATION_1]]</p>
+          </div>
+          <p class="date">[[DATES_1]]</p>
+        </div>
+        <ul>
+          <li>[[EVIDENCE_1A]]</li>
+          <li>[[EVIDENCE_1B]]</li>
+          <li>[[EVIDENCE_1C]]</li>
+        </ul>
+      </article>
+
+      <article>
+        <div class="row">
+          <div>
+            <h3>[[ROLE_2]]</h3>
+            <p class="organisation">[[ORGANISATION_2]]</p>
+          </div>
+          <p class="date">[[DATES_2]]</p>
+        </div>
+        <ul>
+          <li>[[EVIDENCE_2A]]</li>
+          <li>[[EVIDENCE_2B]]</li>
+          <li>[[EVIDENCE_2C]]</li>
+        </ul>
+      </article>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <div class="skills">
+        <p><strong>[[SKILL_GROUP_1]]:</strong> [[SKILLS_1]]</p>
+        <p><strong>[[SKILL_GROUP_2]]:</strong> [[SKILLS_2]]</p>
+        <p><strong>Languages:</strong> [[LANGUAGES]]</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <div class="row">
+        <div>
+          <h3>[[EDUCATION]]</h3>
+          <p class="organisation">[[EDUCATION_INSTITUTION]]</p>
+        </div>
+        <p class="date">[[EDUCATION_DATE]]</p>
+      </div>
+    </section>
+
+    <footer>[[CONSENT_TEXT_OR_REMOVE_FOOTER]]</footer>
+  </main>
+</body>
+</html>

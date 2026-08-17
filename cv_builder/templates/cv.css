@@ -1,0 +1,150 @@
+@page {
+  size: A4;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #eef1f4;
+  color: #17202a;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.38;
+}
+
+.page {
+  position: relative;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 15mm 17mm 18mm;
+  background: #fff;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12mm;
+  padding-bottom: 5mm;
+  border-bottom: 1.5pt solid #315f70;
+}
+
+h1 {
+  margin: 0;
+  color: #173f4e;
+  font-size: 25pt;
+  line-height: 1;
+  letter-spacing: -0.4pt;
+}
+
+.location {
+  margin: 2mm 0 0;
+  color: #51616a;
+  font-size: 9pt;
+}
+
+address {
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+  text-align: right;
+  font-style: normal;
+  font-size: 9pt;
+}
+
+a {
+  color: #173f4e;
+  text-decoration: none;
+}
+
+section {
+  margin-top: 4.5mm;
+}
+
+h2 {
+  margin: 0 0 2mm;
+  color: #315f70;
+  font-size: 10.5pt;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1pt;
+}
+
+h3,
+p {
+  margin: 0;
+}
+
+h3 {
+  font-size: 10.5pt;
+  line-height: 1.25;
+}
+
+article + article {
+  margin-top: 3.5mm;
+  padding-top: 3mm;
+  border-top: 0.5pt solid #d5dde1;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8mm;
+}
+
+.organisation,
+.date {
+  color: #51616a;
+  font-size: 9pt;
+}
+
+.date {
+  flex: none;
+  white-space: nowrap;
+}
+
+ul {
+  margin: 1.5mm 0 0;
+  padding-left: 5mm;
+}
+
+li {
+  margin: 0.7mm 0;
+  padding-left: 1mm;
+}
+
+.skills {
+  display: grid;
+  gap: 1mm;
+}
+
+footer {
+  position: absolute;
+  right: 17mm;
+  bottom: 14mm;
+  left: 17mm;
+  padding-top: 2.5mm;
+  border-top: 0.5pt solid #aebbc1;
+  color: #59676d;
+  font-size: 8pt;
+  line-height: 1.25;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+
+  .page {
+    margin: 0;
+  }
+}
