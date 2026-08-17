@@ -25,9 +25,15 @@ Before the first build, as recommended editorial discipline:
 
 1. **Lock the evidence and vacancy.** Save the exact job description. Map every intended claim to a primary record or current direct confirmation. Prefer current primary evidence over summaries, previous CV wording, reviewer assumptions, and phrases copied from the vacancy. Confirm dates, titles, durations, metrics, credentials, language levels, authorship, contribution boundaries, and publication status when they affect recruiter inference.
 2. **Lock the copy.** Review the unstyled text in final reading order. Use concrete verbs and specific evidence. Remove repetition, unsupported keywords, inflated seniority, defensive audit language, and qualifications that do not materially change the claim. Clearly distinguish direct work, team support, and tool-assisted execution.
-3. **Lock the visual direction.** Confirm that the copied template's hierarchy, density, column structure, contact placement, portrait policy, and minimum legibility fit the intended CV. If a materially different layout is required, stop and request approval for a separate, versioned CSS or packaged-template change before resuming vacancy-specific copy. Do not infer repository-mutation authority from an application-tailoring request, and do not interleave basic information-architecture discovery with content edits.
+3. **Choose the design mode.**
 
-After those gates, make one integrated revision and build it. Reopen an earlier gate when a later change alters facts, contribution boundaries, publication status, reading order, or the approved visual premise.
+   - **Default:** when the user supplies no visual direction, use the bundled neutral template and state that the result will have the default appearance.
+   - **Supplied design:** when the user provides an existing CV, screenshot, image, PDF, or written direction, reproduce its approved visual principles before vacancy-specific tailoring.
+   - **Approved baseline:** for repeated applications, reuse the approved HTML and CSS and change only vacancy-specific content unless the user requests a redesign.
+
+   Complete design setup and obtain user approval before beginning a batch of vacancy-specific CVs. If a materially different layout requires a CSS or packaged-template change, request separate approval before changing it. Do not infer repository-mutation authority from an application-tailoring request, and do not interleave design discovery with content tailoring.
+
+After those gates, make one integrated revision and build it. Reopen an earlier gate when a later change alters facts, contribution boundaries, publication status, reading order, or the approved visual premise. For repeated applications, preserve the approved baseline and established design while adapting emphasis and evidence to each saved vacancy.
 
 ## Installation
 
@@ -77,7 +83,9 @@ Normal vacancy-specific edits are:
 - `offer.md`: replace its marker with the vacancy text so later review uses the same source context.
 - `cv.html`: replace every `[[PLACEHOLDER]]`, remove irrelevant optional blocks, and write only evidence-supported content.
 
-Do not edit `.cv-builder.json`; it is CLI-owned configuration. `new` copies the packaged `cv.css` into the workspace once, and `build` reads the current workspace CSS without regenerating or snapshotting it. Keep CSS stable during ordinary content iterations. If a design change genuinely requires CSS, preserve or version that CSS separately and review it as a deliberate design change. Reusable theme fixes belong in the packaged template, but template maintenance is a repository task rather than a public CLI command.
+Do not edit `.cv-builder.json`; it is CLI-owned configuration. `new` starts from the bundled default design and copies the packaged `cv.css` into the workspace once. A supplied or approved custom design may require deliberate changes to both `cv.html` and `cv.css` before vacancy tailoring begins.
+
+`build` reads the current workspace CSS without regenerating or snapshotting it; only HTML enters `iterations/`. Preserve or version approved custom CSS alongside the baseline HTML, then keep both stable during ordinary vacancy-specific iterations. Reusable default-theme fixes belong in the packaged template, but template maintenance is a repository task rather than a public CLI command.
 
 ## Build behavior
 

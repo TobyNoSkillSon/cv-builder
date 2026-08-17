@@ -1,8 +1,35 @@
 # CV Builder
 
-CV Builder is an agent-first CLI for creating an editable HTML CV and rendering it as a verified, upload-ready PDF. The agent writes the vacancy-specific content; the CLI owns the template, HTML iterations, Chromium rendering, mechanical checks, preview, and stable output filename.
+CV Builder is an agent-first CLI for creating an editable HTML CV and rendering it as a verified, upload-ready PDF. The CLI provides a neutral default template and handles HTML iterations, Chromium rendering, mechanical checks, the preview, and the stable output filename. The agent writes vacancy-specific content and can apply a supplied or approved design.
 
 It does not invent candidate evidence, contact employers, or submit applications.
+
+## Choose the design first
+
+If you give the agent no visual reference or design instructions, it will use the bundled default design. The result should be mechanically sound, but it will have the default appearance.
+
+For a specific appearance, give the agent one or more of the following before creating application-specific CVs:
+
+- an existing CV or approved baseline;
+- a screenshot, image, or PDF showing the desired layout;
+- written instructions covering columns, colours, typography, spacing, contact placement, portrait use, density, section structure, and whether section order may change between applications.
+
+The agent should first create and verify one baseline CV, show it to the user, and obtain approval of the design. Design exploration and vacancy tailoring should not happen simultaneously. A baseline is created through the ordinary `new`, deliberate HTML and CSS editing, and `build` flow; it is not a separate CLI feature.
+
+## Reuse the approved design
+
+CV Builder is intended to make repeated job applications faster. Once a baseline design is approved:
+
+1. preserve the approved HTML and CSS;
+2. give the agent the exact job offer;
+3. give it current authorized candidate evidence and the approved baseline or its path;
+4. let it adjust emphasis, summary, and relevant evidence for that vacancy;
+5. change section order only when the approved baseline leaves it flexible;
+6. keep the established design unless the user explicitly requests a change.
+
+A vacancy tells the agent what to emphasise. It does not tell the agent what is true, so the job offer alone is not sufficient evidence for candidate claims.
+
+CV Builder does not currently remember a personal design between new workspaces. Give the agent the approved baseline or its path when starting another application.
 
 ## Give this repository to an agent
 
