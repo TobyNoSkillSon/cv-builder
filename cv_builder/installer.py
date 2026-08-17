@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import sys
 import venv
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 
 from .paths import data_root, default_bin_dir
