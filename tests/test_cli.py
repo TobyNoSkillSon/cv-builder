@@ -13,7 +13,7 @@ import pymupdf as fitz
 
 from cv_builder.cli import main, parser
 from cv_builder.config import AppConfig, ConfigError, application_name, load_config, slugify, write_config
-from cv_builder.pipeline import BuildError, _ApplicantParser, _snapshot, build
+from cv_builder.pipeline import BuildError, _ApplicantParser, _open_document, _snapshot, build
 from cv_builder.verification import verify_pdf
 
 
@@ -137,7 +137,7 @@ class PipelineTests(unittest.TestCase):
             app = make_app(root)
             downloads = root / "Downloads"
 
-            with mock.patch("cv_builder.pipeline._render", side_effect=lambda _html, pdf: make_pdf(pdf)), mock.patch("cv_builder.pipeline._open_document") as opened:
+            with mock.patch("cv_builder.pipeline._render", side_effect=lambda _html, pdf: make_pdf(pdf)), mock.patch("cv_builder.pipeline._open_document", return_value=None) as opened:
                 first = build(app, downloads_dir=downloads)
                 (app / "cv.html").write_text(complete_html().replace("Operations profile", "Revised profile"), encoding="utf-8")
                 second = build(app, downloads_dir=downloads)
@@ -212,6 +212,35 @@ class PipelineTests(unittest.TestCase):
             with mock.patch("cv_builder.pipeline._render", side_effect=lambda _html, pdf: make_pdf(pdf, applicant="Applicant: Example")):
                 result = build(app, downloads_dir=root / "Downloads", open_document=False)
             self.assertEqual(Path(result["pdf"]).name, "Applicant- Example CV.pdf")
+
+    def test_viewer_failure_returns_warning_without_failing_build(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            app = make_app(root)
+            warning = "PDF was built successfully but could not be opened automatically."
+            with mock.patch("cv_builder.pipeline._render", side_effect=lambda _html, pdf: make_pdf(pdf)), mock.patch("cv_builder.pipeline._open_document", return_value=warning):
+                result = build(app, downloads_dir=root / "Downloads")
+            self.assertTrue(result["ok"])
+            self.assertEqual(result["warning"], warning)
+            self.assertTrue(Path(result["pdf"]).is_file())
+
+    def test_linux_viewer_warning_suggests_probable_causes(self):
+        with mock.patch("cv_builder.pipeline.sys.platform", "linux"), mock.patch(
+            "cv_builder.pipeline.subprocess.run", side_effect=FileNotFoundError("xdg-open")
+        ):
+            warning = _open_document(Path("/tmp/Applicant CV.pdf"))
+        self.assertIn("xdg-open is unavailable", warning or "")
+        self.assertIn("no default PDF viewer", warning or "")
+        self.assertIn("no graphical session", warning or "")
+
+    def test_windows_viewer_warning_suggests_file_association(self):
+        pdf = Path("Applicant CV.pdf")
+        with mock.patch("cv_builder.pipeline.sys.platform", "win32"), mock.patch(
+            "cv_builder.pipeline.os.name", "nt"
+        ), mock.patch.object(os, "startfile", create=True, side_effect=OSError("no association")):
+            warning = _open_document(pdf)
+        self.assertIn("no default PDF application association", warning or "")
+        self.assertIn("Open it manually", warning or "")
 
 
 class CLITests(unittest.TestCase):

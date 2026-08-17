@@ -193,7 +193,7 @@ def _preview_png(pdf: Path) -> bytes:
         return document[0].get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False).tobytes("png")
 
 
-def _open_document(path: Path) -> None:
+def _open_document(path: Path) -> str | None:
     try:
         if sys.platform == "darwin":
             subprocess.run(["open", "-a", "Preview", str(path)], check=True)
@@ -202,7 +202,17 @@ def _open_document(path: Path) -> None:
         else:
             subprocess.run(["xdg-open", str(path)], check=True)
     except (OSError, subprocess.CalledProcessError) as exc:
-        raise BuildError(f"PDF was built but could not be opened: {path}: {exc}") from exc
+        if os.name == "nt":
+            probable_cause = "Windows has no default PDF application association, or the viewer launch was blocked"
+        elif sys.platform == "darwin":
+            probable_cause = "Preview is unavailable, or macOS refused the open request"
+        else:
+            probable_cause = "xdg-open is unavailable, no default PDF viewer is configured, or there is no graphical session"
+        return (
+            f"PDF was built successfully but could not be opened automatically. "
+            f"Most probable cause: {probable_cause}. Open it manually: {path}. Error: {exc}"
+        )
+    return None
 
 
 def build(
@@ -235,9 +245,8 @@ def build(
         finally:
             temporary_pdf.unlink(missing_ok=True)
 
-    if open_document:
-        _open_document(destination)
-    return {
+    warning = _open_document(destination) if open_document else None
+    result: dict[str, object] = {
         "ok": True,
         "iteration": iteration,
         "snapshot": str(snapshot),
@@ -247,3 +256,6 @@ def build(
         "pages": report["pages"],
         "links": report["links"],
     }
+    if warning:
+        result["warning"] = warning
+    return result

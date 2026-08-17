@@ -62,9 +62,9 @@ Run `cv-builder build` from the application directory. It:
 4. Verifies the applicant name, page count, selectable text geometry, email/phone links, bottom clearance, minimum font size, and fully transparent, pure-white, microscopic, or geometrically off-page text spans.
 5. Overwrites `cv-preview.png` for visual inspection.
 6. Atomically overwrites `~/Downloads/APPLICANT NAME CV.pdf`.
-7. Opens the PDF with the platform viewer.
+7. Attempts to open the PDF with the platform viewer.
 
-A failed render or verification never replaces the Downloads PDF.
+A failed render or verification never replaces the Downloads PDF. A missing viewer, file association, `xdg-open`, or graphical session produces a warning only: the verified PDF remains successfully built and can be opened manually from the reported path.
 
 ## Visual review
 

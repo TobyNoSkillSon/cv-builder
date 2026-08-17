@@ -1,6 +1,6 @@
 [project]
 name = "cv-builder"
-version = "0.2.0"
+version = "0.2.1"
 description = "Minimal CLI for creating, rendering and verifying editable HTML CVs"
 requires-python = ">=3.11"
 license = "MIT"

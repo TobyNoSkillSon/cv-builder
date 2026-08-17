@@ -1,0 +1,4 @@
+include LICENSE
+include requirements.txt
+include SKILL.md
+recursive-include cv_builder/templates *.html *.css
