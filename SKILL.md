@@ -1,159 +1,66 @@
 ---
 name: cv-builder
-description: Create, tailor, render, verify and visually review an evidence-backed, upload-ready CV through the minimal cv-builder CLI. Use for vacancy-specific CV work, HTML-to-PDF iteration, safety checks, rollback and acceptance review.
+description: Create, edit, render, or review a vacancy-specific CV with the cv-builder CLI, using authorized evidence and an approved design baseline. Use for CVBuilder workspaces, HTML/CSS CVs, PDF builds, previews, or claim and link checks.
 ---
 
 # CV Builder
 
-## Purpose
+Use `cv-builder` for workspace and PDF mechanics. Use the active agent and the user for evidence selection, truthful wording, design judgment, review, and approval. The [README](README.md) has the detailed interface and installation reference; `cv-builder --help` has the installed command summary.
 
-Use `cv-builder` for the deterministic mechanics of a CV: workspace creation, HTML iteration snapshots, Chromium PDF rendering, PDF safety checks, a visual PNG preview, a stable upload-ready filename, and opening the result.
+## Workflow
 
-The CLI does not invent candidate facts or decide which claims are truthful. The active agent must use the candidate's authorized evidence and the saved vacancy text.
+1. Frame the application. Load the exact vacancy, the authorized evidence for the candidate, and the design baseline. The baseline may be the bundled neutral template, a supplied reference, or an already approved HTML/CSS workspace. Map each material claim to evidence before writing it.
 
-## Recommended workflow gates
+   Completion: the vacancy source, evidence set, and design baseline are identified, and the intended claims have support.
 
-Use this external editorial checklist around the CLI. These states are not stored or enforced by `cv-builder`:
+2. Create or reuse a workspace. For a new application, run this from its parent directory:
 
-```text
-draft -> mechanically verified -> reviewer-ready -> user-approved -> delivered
-```
+   ```sh
+   cv-builder new "Employer" "Role"
+   ```
 
-A successful build advances only the mechanical state. It does not make the wording true, the design persuasive, or the document approved.
+   `new` refuses to overwrite an existing path and creates a normalized `Employer-Role/` directory containing `offer.md`, `cv.html`, `cv.css`, `.cv-builder.json`, and an empty `iterations/` directory. Reuse an existing workspace only when its vacancy, evidence, and design baseline are the intended ones. Run later commands from the application directory.
 
-Before the first build, as recommended editorial discipline:
+   Completion: the application directory is selected and its CLI-owned configuration and required source files are present.
 
-1. **Lock the evidence and vacancy.** Save the exact job description. Map every intended claim to a primary record or current direct confirmation. Prefer current primary evidence over summaries, previous CV wording, reviewer assumptions, and phrases copied from the vacancy. Confirm dates, titles, durations, metrics, credentials, language levels, authorship, contribution boundaries, and publication status when they affect recruiter inference.
-2. **Lock the copy.** Review the unstyled text in final reading order. Use concrete verbs and specific evidence. Remove repetition, unsupported keywords, inflated seniority, defensive audit language, and qualifications that do not materially change the claim. Clearly distinguish direct work, team support, and tool-assisted execution.
-3. **Choose the design mode.**
+3. Edit complete sources. Replace the marker in `offer.md` with the saved vacancy. Complete `cv.html` and `cv.css` for the approved baseline and vacancy emphasis. Remove every `[[PLACEHOLDER]]`; put the applicant name in `h1 data-cv-applicant`; and provide real `mailto:` and `tel:` links. Keep `.cv-builder.json` under CLI control. Use authorized evidence for every factual claim, contribution boundary, date, metric, credential, and public link.
 
-   - **Default:** when the user supplies no visual direction, use the bundled neutral template and state that the result will have the default appearance.
-   - **Supplied design:** when the user provides an existing CV, screenshot, image, PDF, or written direction, reproduce its approved visual principles before vacancy-specific tailoring.
-   - **Approved baseline:** for repeated applications, reuse the approved HTML and CSS and change only vacancy-specific content unless the user requests a redesign.
+   Completion: `offer.md`, HTML, and CSS are complete, locally usable, evidence-backed, and ready for one integrated build.
 
-   Complete design setup and obtain user approval before beginning a batch of vacancy-specific CVs. If a materially different layout requires a CSS or packaged-template change, request separate approval before changing it. Do not infer repository-mutation authority from an application-tailoring request, and do not interleave design discovery with content tailoring.
+4. Build the candidate.
 
-After those gates, make one integrated revision and build it. Reopen an earlier gate when a later change alters facts, contribution boundaries, publication status, reading order, or the approved visual premise. For repeated applications, preserve the approved baseline and established design while adapting emphasis and evidence to each saved vacancy.
+   ```sh
+   cv-builder build
+   ```
 
-## Installation
+   `build` snapshots the exact current `cv.html` as the next `iterations/cv-NNN.html`. It does not snapshot CSS. It renders a local A4 PDF with JavaScript disabled in an offline browser context, verifies the PDF, writes `cv-preview.png`, atomically replaces `~/Downloads/APPLICANT NAME CV.pdf`, and attempts to open that PDF. A viewer warning leaves the built PDF available at the reported path.
 
-Before installing or updating the CLI, briefly explain that installation will create an isolated uv tool environment, install Python dependencies and a private Playwright Chromium runtime, and expose a `cv-builder` launcher. Ask the user for explicit permission and do nothing until approved. If uv is unavailable, disclose the standard-library `venv` and pip fallback before proceeding.
+   Source validation happens before snapshotting. After a snapshot is written, a render or verification failure still consumes that iteration and preserves the attempted HTML, while the previous Downloads PDF remains in place.
 
-From the repository, run:
+   Completion: the command succeeds and reports the iteration, HTML snapshot, PDF, preview, hash, page report, and links.
 
-```bash
-python install.py
-```
+5. Inspect the result. Review both `cv-preview.png` and the PDF. Check reading order, clipping, whitespace, density, hierarchy, wrapping, contact details, and the relevance of visible evidence. Verify every claim against the authorized evidence and check that visible contact details match the `mailto:` and `tel:` destinations. Check each public link against the implication made by the CV.
 
-The installer changes only CLI package/runtime state. Install this skill manually through the current harness's documented skill mechanism, then ask the user to refresh or restart the harness and load `cv-builder` to verify visibility.
+   The built-in checks cover one A4 page, the applicant name in the first 400 extracted characters, `mailto:` and `tel:` links, at least 10 mm bottom clearance, text of at least 7.5 pt, and suspicious extracted spans that are transparent, white, microscopic, or outside the page. They leave visual quality, link destinations, truth, claim support, ATS suitability, and submission readiness to inspection and human judgment.
 
-To remove the CLI runtime without touching the repository, shared browsers, or manually installed skills:
+   Completion: the build passes, the preview and PDF have been inspected, and factual, functional, and material presentation blockers are resolved.
 
-```bash
-python uninstall.py
-```
+6. Obtain user approval. Show the actual candidate and get explicit approval for that candidate, rather than treating a passing build or review as approval. If a later change alters evidence, wording, reading order, or the design baseline, return to the affected steps and build again.
 
-## Commands
+   Completion: the user has approved the exact candidate under review.
 
-The normal interface has two commands and no workflow flags:
+7. Preserve the artifact and stop at the boundary. Keep the approved workspace, HTML snapshot, CSS, preview, and approved PDF. Confirm that the reported Downloads path contains the approved PDF, using the reported hash when useful. Submission, account changes, repository publication, and employer contact each require separate authorization.
 
-```bash
-cv-builder new "Employer" "Role"
-cd "Employer-Role"
-cv-builder build
-```
+   Completion: the approved artifact is preserved and no external submission or account action has been inferred from CV approval.
 
-Run `cv-builder build` after each integrated revision that is ready for mechanical and visual review. Do not render repeatedly while facts, copy, or the basic design premise are still unresolved.
+## Installation authority
 
-## Workspace
+CLI installation and optional harness-skill installation are separate actions. Obtain approval for each before mutating state.
 
-`new` creates:
+From the repository checkout, `python install.py` installs the CLI into an isolated `uv tool` environment when `uv` is available, otherwise a standard Python `venv` with `pip`; it installs dependencies and CV Builder's private Chromium runtime. It changes CLI/runtime state only. It does not install this skill or modify harness files. Install `cv-builder/SKILL.md` separately through the current harness's documented skill mechanism, then refresh or restart the harness and verify that the skill is visible.
 
-```text
-Employer-Role/
-├── offer.md
-├── cv.html
-├── cv.css
-├── .cv-builder.json
-└── iterations/
-```
+`python uninstall.py` reads the install receipt and removes the recorded CLI environment, owned launcher, receipt, and private Chromium files. It validates recorded paths and launcher ownership before removal, delegates `uv` cleanup to the recorded executable when applicable, and leaves the repository, shared browsers, manually installed skills, and unrelated files alone. A failed safety check leaves the relevant state in place. See the [README](README.md) for path overrides and installer details.
 
-Normal vacancy-specific edits are:
+## Iteration rollback
 
-- `offer.md`: replace its marker with the vacancy text so later review uses the same source context.
-- `cv.html`: replace every `[[PLACEHOLDER]]`, remove irrelevant optional blocks, and write only evidence-supported content.
-
-Do not edit `.cv-builder.json`; it is CLI-owned configuration. `new` starts from the bundled default design and copies the packaged `cv.css` into the workspace once. A supplied or approved custom design may require deliberate changes to both `cv.html` and `cv.css` before vacancy tailoring begins.
-
-`build` reads the current workspace CSS without regenerating or snapshotting it; only HTML enters `iterations/`. Preserve or version approved custom CSS alongside the baseline HTML, then keep both stable during ordinary vacancy-specific iterations. Reusable default-theme fixes belong in the packaged template, but template maintenance is a repository task rather than a public CLI command.
-
-## Build behavior
-
-Run `cv-builder build` from the application directory. It:
-
-1. Requires non-symlink regular files for `offer.md`, `cv.html`, and `cv.css`; rejects an unsaved vacancy marker, unresolved `[[PLACEHOLDERS]]`, scripts, iframes, objects, embeds, base elements, inline event handlers, remote `src` values on media elements, and remote `@import` or `url(...)` resources in `cv.css`.
-2. Copies the exact current `cv.html` to the next file in `iterations/`, such as `cv-001.html`.
-3. Renders the current HTML to A4 PDF with JavaScript disabled and the browser context offline.
-4. Checks the applicant name, one-page output, PyMuPDF-extracted text geometry, the presence of at least one `mailto:` and one `tel:` PDF link, bottom clearance, minimum font size, and extracted spans that are fully transparent, pure white, microscopic, or geometrically off-page.
-5. Overwrites `cv-preview.png` for visual inspection.
-6. Atomically overwrites `~/Downloads/APPLICANT NAME CV.pdf`.
-7. Attempts to open the PDF with the platform viewer.
-
-Snapshotting happens before rendering and verification, so a failed attempt still consumes an HTML iteration number and preserves that attempted source. A failed render or verification never replaces the Downloads PDF. A missing viewer, file association, `xdg-open`, or graphical session produces a warning only: the verified PDF remains successfully built and can be opened manually from the reported path.
-
-## Visual and editorial review
-
-Inspect `cv-preview.png` and the opened PDF after each successful build. Extracted text and page count cannot prove that the rendered page is visually sound. Check:
-
-- clipping, missing paint, unintended blank regions, and off-page content;
-- conspicuous under-fill, excessive density, weak hierarchy, and awkward wrapping;
-- contact readability, section balance, date alignment, and consistent spacing;
-- whether the most relevant evidence is visible in a quick recruiter scan;
-- repeated claims, synthetic wording, unsupported implications, and link destinations.
-
-When optional external review is useful, freeze one candidate: do not mutate its source or artifacts while it is being reviewed. Give the reviewer the saved vacancy and underlying evidence, then classify findings consistently:
-
-- **BLOCKED:** a factual, functional, or materially misleading presentation defect;
-- **READY:** no blocker remains;
-- **OPTIONAL:** taste or future improvement that must not trigger another revision automatically.
-
-Verify review claims against the actual source, PDF, and preview rather than treating agreement as proof. Manually check that visible contact details match the `mailto:` and `tel:` destinations and that every public link supports the implication made by the CV. Mechanical verification and external review readiness are not user approval.
-
-## Iteration and rollback
-
-Each build preserves only the HTML source used for that attempt:
-
-```text
-iterations/
-├── cv-001.html
-├── cv-002.html
-└── ...
-```
-
-To roll back, copy the chosen iteration over `cv.html`, review it, and run `cv-builder build` again. CSS is intentionally stable; HTML-only rollback is exact only while `cv.css` remains unchanged.
-
-The iteration number is mechanical history, not an approval state. Keep disposable copy or layout experiments outside the application workspace when possible, and call `build` only when a complete revision is ready for mechanical review. Once called, the attempt enters history even if rendering or verification fails. Preserve a user-approved artifact before reopening it for a new requirement.
-
-## Acceptance and delivery
-
-Before calling a CV final:
-
-1. verify the rendered candidate and all links;
-2. separate blockers from optional taste;
-3. obtain explicit user approval of the actual candidate;
-4. confirm the reported Downloads path contains the approved bytes;
-5. keep submission, account mutation, repository publication, and employer contact as separately authorized actions.
-
-If no blocker remains and the user accepts the candidate, stop. A passing build, positive review, or optional suggestion does not independently authorize another revision.
-
-## Boundaries
-
-- Never invent employment, dates, metrics, skills, credentials, language certification, seniority, responsibility, public-source status, or unaided authorship.
-- A vacancy changes selection and emphasis, not the underlying facts.
-- Do not add age, birth date, portrait, marital status, or other demographic information unless the user explicitly approves it and the application context genuinely requires it.
-- Use plain recruiter-facing language. Prefer concrete actions and outcomes over compliance vocabulary, inflated abstractions, or keyword-shaped prose.
-- Keep material limitations visible when omitting them would mislead, but do not make defensive disclaimers the visual centre of the document.
-- Never add invisible, white, transparent, microscopic, metadata-only, or off-page recruiter instructions.
-- Never add scripts, inline event handlers, embedded active content, tracking resources, or remote media/stylesheets.
-- Keep ordinary semantic headings, selectable text, and real `mailto:` and `tel:` links. Verify every public link and ensure its destination supports the implication made by the CV.
-- The CLI only creates local artifacts. It does not submit applications, contact employers, publish repositories, or mutate accounts.
+To roll back, copy the chosen `iterations/cv-NNN.html` over `cv.html`, inspect it, and run `cv-builder build` again. The rollback is exact for HTML only while `cv.css` is unchanged. An iteration records the source used for an attempt, not an approval state.
